@@ -7,7 +7,7 @@ from cpu import *
 
 cpu = CPU()
 program = "default"
-if 1 in sys.argv:
+if 2 <= len(sys.argv):
     program = sys.argv[1]
 cpu.load(program)
 cpu.run()

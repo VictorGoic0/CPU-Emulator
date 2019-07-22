@@ -32,6 +32,25 @@ class CPU:
             0b00000000,
             0b00000001, # HLT
             ]
+        else:
+            program_file = open(program)
+            instructions = program_file.read()
+            program_file.close()
+            program = []
+            i = 0
+            length = len(instructions)
+            while i<length:
+                current = instructions[i]
+                if current == "1" or current == "0":
+                    next_num = instructions[i+1]
+                    if next_num == "1" or next_num == "0":
+                        string = current
+                        for j in range(i+1, i+8):
+                            string += instructions[j]
+                        program.append(int(string, 2))
+                        i += 8
+                i += 1
+
 
         address = 0
 

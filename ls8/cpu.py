@@ -2,8 +2,8 @@
 
 import sys
 HLT = 0b00000001
-LDI = 10000010 00000rrr iiiiiiii
-PRN = 01000111 00000rrr
+LDI = 0b10000010
+PRN = 0b01000111
 
 class CPU:
     """Main CPU class."""
@@ -74,9 +74,9 @@ class CPU:
         running = True
         while running:
             IR = self.pc
-            operand = ram_read(IR)
-            operand_a = ram_read(IR+1)
-            operand_b = ram_read(IR+2)
+            operand = self.ram_read(IR)
+            operand_a = self.ram_read(IR+1)
+            operand_b = self.ram_read(IR+2)
             ## execute instruction
             ## update PC
             if operand == HLT:

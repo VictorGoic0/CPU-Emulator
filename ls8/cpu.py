@@ -13,6 +13,10 @@ class CPU:
         self.ram = [0] * 256
         self.register = [0] * 8
         self.pc = 0
+        self.branchtable = {}
+        self.branchtable[LDI] = self.handle_LDI
+        self.branchtable[PRN] = self.handle_PRN
+        self.branchtable[MUL] = self.handle_MUL
 
     def ram_read(self, address):
         return self.ram[address]
@@ -92,6 +96,23 @@ class CPU:
 
         print()
 
+    def handle_LDI(self, operand_a, operand_b):
+        register = operand_a
+        integer = operand_b
+        self.register[register] = integer
+        self.pc += 3
+
+    def handle_PRN(self, operand_a, operand_b):
+        register = operand_a
+        print(self.register[register])
+        self.pc += 2
+
+    def handle_MUL(self, operand_a, operand_b):
+        num1 = self.register[operand_a]
+        num2 = self.register[operand_b]
+        self.register[operand_a] = num1 * num2
+        self.pc += 3
+
     def run(self):
         running = True
         while running:
@@ -99,19 +120,10 @@ class CPU:
             operand = self.ram_read(IR)
             operand_a = self.ram_read(IR+1)
             operand_b = self.ram_read(IR+2)
-            if operand == HLT:
+            if operand in self.branchtable:
+                self.branchtable[operand](operand_a, operand_b)
+            elif operand == HLT:
                 running = False
-            elif operand == LDI:
-                register = operand_a
-                integer = operand_b
-                self.register[register] = integer
-                self.pc += 3
-            elif operand == PRN:
-                register = operand_a
-                print(self.register[register])
-                self.pc += 2
-            elif operand == MUL:
-                num1 = self.register[operand_a]
-                num2 = self.register[operand_b]
-                self.register[operand_a] = num1 * num2
-                self.pc += 3
+            else:
+                print("Unfamiliar instruction")
+                running = False

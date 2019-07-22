@@ -6,6 +6,8 @@ import sys
 from cpu import *
 
 cpu = CPU()
-
-cpu.load()
+program = "default"
+if 1 in sys.argv:
+    program = sys.argv[1]
+cpu.load(program)
 cpu.run()

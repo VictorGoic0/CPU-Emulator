@@ -4,6 +4,7 @@ import sys
 HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
+MUL = 0b10100010
 
 class CPU:
     """Main CPU class."""
@@ -49,7 +50,10 @@ class CPU:
                             string += instructions[j]
                         program.append(int(string, 2))
                         i += 8
-                i += 1
+                    else:
+                        i += 1
+                else:
+                    i += 1
 
 
         address = 0
@@ -95,8 +99,6 @@ class CPU:
             operand = self.ram_read(IR)
             operand_a = self.ram_read(IR+1)
             operand_b = self.ram_read(IR+2)
-            ## execute instruction
-            ## update PC
             if operand == HLT:
                 running = False
             elif operand == LDI:
@@ -108,3 +110,8 @@ class CPU:
                 register = operand_a
                 print(self.register[register])
                 self.pc += 2
+            elif operand == MUL:
+                num1 = self.register[operand_a]
+                num2 = self.register[operand_b]
+                self.register[operand_a] = num1 * num2
+                self.pc += 3

@@ -1,6 +1,7 @@
 """CPU functionality."""
 
 import sys
+HLT = 0b00000001
 
 class CPU:
     """Main CPU class."""
@@ -8,6 +9,7 @@ class CPU:
     def __init__(self):
         self.ram = [0] * 256
         self.register = [0] * 8
+        self.pc = 0
 
     def ram_read(self, address):
         return self.ram[address]
@@ -62,10 +64,18 @@ class CPU:
         ), end='')
 
         for i in range(8):
-            print(" %02X" % self.reg[i], end='')
+            print(" %02X" % self.register[i], end='')
 
         print()
 
     def run(self):
-        """Run the CPU."""
-        pass
+        running = True
+        while running:
+            IR = self.pc
+            operand = ram_read(IR)
+            operand_a = ram_read(IR+1)
+            operand_b = ram_read(IR+2)
+            ## execute instruction
+            ## update PC
+            if operand == HLT:
+                running = False

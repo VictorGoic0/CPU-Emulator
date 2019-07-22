@@ -2,6 +2,7 @@
 
 import sys
 HLT = 0b00000001
+LDI = 10000010 00000rrr iiiiiiii
 
 class CPU:
     """Main CPU class."""
@@ -79,3 +80,8 @@ class CPU:
             ## update PC
             if operand == HLT:
                 running = False
+            elif operand == LDI:
+                register = operand_a
+                integer = operand_b
+                self.register[register] = integer
+                IR += 3

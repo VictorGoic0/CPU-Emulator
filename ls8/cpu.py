@@ -49,9 +49,8 @@ class CPU:
                 if current == "1" or current == "0":
                     next_num = instructions[i+1]
                     if next_num == "1" or next_num == "0":
-                        string = current
-                        for j in range(i+1, i+8):
-                            string += instructions[j]
+                        string = instructions[i:i+8]
+                        string = ''.join(string)
                         program.append(int(string, 2))
                         i += 8
                     else:

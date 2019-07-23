@@ -4,6 +4,7 @@ import sys
 HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
+ADD = 0b10100000
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
@@ -21,6 +22,7 @@ class CPU:
         self.branchtable = {}
         self.branchtable[LDI] = self.handle_LDI
         self.branchtable[PRN] = self.handle_PRN
+        self.branchtable[ADD] = self.handle_ADD
         self.branchtable[MUL] = self.handle_MUL
         self.branchtable[PUSH] = self.handle_PUSH
         self.branchtable[POP] = self.handle_POP
@@ -101,6 +103,12 @@ class CPU:
         print(self.register[register])
         self.pc += operands
 
+    def handle_ADD(self, operand_a, operand_b, operands):
+        num1 = self.register[operand_a]
+        num2 = self.register[operand_b]
+        self.register[operand_a] = num1 + num2
+        self.pc += operands
+    
     def handle_MUL(self, operand_a, operand_b, operands):
         num1 = self.register[operand_a]
         num2 = self.register[operand_b]
@@ -120,12 +128,14 @@ class CPU:
         self.pc += operands
 
     def handle_CALL(self, operand_a, operand_b, operands):
-        next_instruction = self.pc += operands
+        current_pointer = self.pc
+        next_instruction = current_pointer + operands
         self.ram[self.sp] = next_instruction
         self.pc = self.register[operand_a]
 
     def handle_RET(self, operand_a, operand_b, operands):
-        pass
+        next_instruction = self.ram[self.sp]
+        self.pc = next_instruction
 
     def run(self):
         running = True
@@ -139,5 +149,5 @@ class CPU:
             elif IR == HLT:
                 running = False
             else:
-                print("Unfamiliar instruction")
+                print("Unfamiliar instruction", '{:b}'.format(IR))
                 running = False

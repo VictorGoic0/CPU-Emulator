@@ -5,6 +5,8 @@ HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
 MUL = 0b10100010
+PUSH = 0b01000101
+POP = 0b01000110
 
 class CPU:
     """Main CPU class."""
@@ -17,6 +19,8 @@ class CPU:
         self.branchtable[LDI] = self.handle_LDI
         self.branchtable[PRN] = self.handle_PRN
         self.branchtable[MUL] = self.handle_MUL
+        self.branchtable[PUSH] = self.handle_PUSH
+        self.branchtable[POP] = self.handle_POP
 
     def ram_read(self, address):
         return self.ram[address]
@@ -98,16 +102,21 @@ class CPU:
         self.register[operand_a] = num1 * num2
         self.pc += 3
 
+    def handle_PUSH(self, operand_a, operand_b):
+        pass
+    
+    def handle_POP(self, operand_a, operand_b):
+        pass
+
     def run(self):
         running = True
         while running:
-            IR = self.pc
-            operand = self.ram_read(IR)
-            operand_a = self.ram_read(IR+1)
-            operand_b = self.ram_read(IR+2)
-            if operand in self.branchtable:
-                self.branchtable[operand](operand_a, operand_b)
-            elif operand == HLT:
+            IR = self.ram_read(self.pc)
+            operand_a = self.ram_read(self.pc+1)
+            operand_b = self.ram_read(self.pc+2)
+            if IR in self.branchtable:
+                self.branchtable[IR](operand_a, operand_b)
+            elif IR == HLT:
                 running = False
             else:
                 print("Unfamiliar instruction")

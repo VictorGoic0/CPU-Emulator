@@ -128,8 +128,7 @@ class CPU:
         self.pc += operands
 
     def handle_CALL(self, operand_a, operand_b, operands):
-        current_pointer = self.pc
-        next_instruction = current_pointer + operands
+        next_instruction = self.pc + operands
         self.ram[self.sp] = next_instruction
         self.pc = self.register[operand_a]
 

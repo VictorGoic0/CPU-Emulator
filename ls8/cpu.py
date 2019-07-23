@@ -14,6 +14,7 @@ class CPU:
     def __init__(self):
         self.ram = [0] * 256
         self.register = [0] * 8
+        self.sp = self.register[7]
         self.pc = 0
         self.branchtable = {}
         self.branchtable[LDI] = self.handle_LDI
@@ -103,7 +104,9 @@ class CPU:
         self.pc += 3
 
     def handle_PUSH(self, operand_a, operand_b):
-        pass
+        value = self.register[operand_a]
+        self.sp -= 1
+        self.ram[self.sp] = value
     
     def handle_POP(self, operand_a, operand_b):
         pass

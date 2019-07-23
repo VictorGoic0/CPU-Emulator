@@ -86,34 +86,34 @@ class CPU:
 
         print()
 
-    def handle_LDI(self, operand_a, operand_b):
+    def handle_LDI(self, operand_a, operand_b, operands):
         register = operand_a
         integer = operand_b
         self.register[register] = integer
-        self.pc += 3
+        self.pc += operands
 
-    def handle_PRN(self, operand_a, operand_b):
+    def handle_PRN(self, operand_a, operand_b, operands):
         register = operand_a
         print(self.register[register])
-        self.pc += 2
+        self.pc += operands
 
-    def handle_MUL(self, operand_a, operand_b):
+    def handle_MUL(self, operand_a, operand_b, operands):
         num1 = self.register[operand_a]
         num2 = self.register[operand_b]
         self.register[operand_a] = num1 * num2
-        self.pc += 3
+        self.pc += operands
 
-    def handle_PUSH(self, operand_a, operand_b):
+    def handle_PUSH(self, operand_a, operand_b, operands):
         value = self.register[operand_a]
         self.sp -= 1
         self.ram[self.sp] = value
-        self.pc += 2
+        self.pc += operands
     
-    def handle_POP(self, operand_a, operand_b):
+    def handle_POP(self, operand_a, operand_b, operands):
         value = self.ram[self.sp]
         self.register[operand_a] = value
         self.sp += 1
-        self.pc += 2
+        self.pc += operands
 
     def run(self):
         running = True
@@ -122,7 +122,8 @@ class CPU:
             operand_a = self.ram_read(self.pc+1)
             operand_b = self.ram_read(self.pc+2)
             if IR in self.branchtable:
-                self.branchtable[IR](operand_a, operand_b)
+                operands = (IR >> 6) + 1
+                self.branchtable[IR](operand_a, operand_b, operands)
             elif IR == HLT:
                 running = False
             else:

@@ -26,9 +26,9 @@ class CPU:
 
     def load(self, program):
         """Load a program into memory."""
-
+        instructions = []
         if program == "default":
-            program = [
+            instructions = [
             # From print8.ls8
             0b10000010, # LDI R0,8
             0b00000000,
@@ -38,30 +38,16 @@ class CPU:
             0b00000001, # HLT
             ]
         else:
-            program_file = open(program)
-            instructions = program_file.read()
-            program_file.close()
-            program = []
-            i = 0
-            length = len(instructions)
-            while i<length:
-                current = instructions[i]
-                if current == "1" or current == "0":
-                    next_num = instructions[i+1]
-                    if next_num == "1" or next_num == "0":
-                        string = instructions[i:i+8]
-                        string = ''.join(string)
-                        program.append(int(string, 2))
-                        i += 8
-                    else:
-                        i += 1
-                else:
-                    i += 1
-
+            with open(program) as f:
+                for line in f:
+                    if line[0] == "1" or line[0] == "0":
+                        binaryString = line[0:8]
+                        binary = int(binaryString, 2)
+                        instructions.append(binary)
 
         address = 0
 
-        for instruction in program:
+        for instruction in instructions:
             self.ram[address] = instruction
             address += 1
 

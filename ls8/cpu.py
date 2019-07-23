@@ -107,11 +107,13 @@ class CPU:
         value = self.register[operand_a]
         self.sp -= 1
         self.ram[self.sp] = value
+        self.pc += 2
     
     def handle_POP(self, operand_a, operand_b):
         value = self.ram[self.sp]
         self.register[operand_a] = value
         self.sp += 1
+        self.pc += 2
 
     def run(self):
         running = True

@@ -10,6 +10,7 @@ PUSH = 0b01000101
 POP = 0b01000110
 CALL = 0b01010000
 RET = 0b00010001
+ST = 0b10000100
 
 class CPU:
     """Main CPU class."""
@@ -28,6 +29,7 @@ class CPU:
         self.branchtable[POP] = self.handle_POP
         self.branchtable[CALL] = self.handle_CALL
         self.branchtable[RET] = self.handle_RET
+        self.branchtable[ST] = self.handle_ST
 
     def ram_read(self, address):
         return self.ram[address]
@@ -135,6 +137,12 @@ class CPU:
     def handle_RET(self, operand_a, operand_b, operands):
         next_instruction = self.ram[self.sp]
         self.pc = next_instruction
+
+    def handle_ST(self, operand_a, operand_b, operands):
+        address = self.register[operand_a]
+        value = self.register[operand_b]
+        self.ram[address] = value
+        self.pc += operands
 
     def run(self):
         running = True

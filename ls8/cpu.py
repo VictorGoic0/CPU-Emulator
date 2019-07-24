@@ -19,6 +19,7 @@ class CPU:
         self.ram = [0] * 256
         self.register = [0] * 8
         self.sp = self.register[7]
+        self.sp = 244
         self.pc = 0
         self.branchtable = {}
         self.branchtable[LDI] = self.handle_LDI

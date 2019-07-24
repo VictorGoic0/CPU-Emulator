@@ -23,7 +23,11 @@ class CPU:
         self.ram = [0] * 256
         self.register = [0] * 8
         self.register[7] = 0xF4
+        self.register[6] = 0
+        self.register[5] = 0
         self.sp = self.register[7]
+        self.IS = self.register[6]
+        self.im = self.register[5]
         self.pc = 0
         self.fl = 0b00000000
         self.branchtable = {}

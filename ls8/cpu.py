@@ -14,6 +14,7 @@ ST = 0b10000100
 JMP = 0b01010100
 PRA = 0b01001000
 IRET = 0b00010011
+CMP = 0b10100111
 
 class CPU:
     """Main CPU class."""
@@ -24,6 +25,7 @@ class CPU:
         self.register[7] = 0xF4
         self.sp = self.register[7]
         self.pc = 0
+        self.fl = 0b00000000
         self.branchtable = {}
         self.branchtable[LDI] = self.handle_LDI
         self.branchtable[PRN] = self.handle_PRN
@@ -37,6 +39,7 @@ class CPU:
         self.branchtable[JMP] = self.handle_JMP
         self.branchtable[PRA] = self.handle_PRA
         self.branchtable[IRET] = self.handle_IRET
+        self.branchtable[CMP] = self.handle_CMP
 
     def ram_read(self, address):
         return self.ram[address]
@@ -161,10 +164,19 @@ class CPU:
         self.pc += operands
 
     def handle_IRET(self, operand_a, operand_b, operands):
-        registers = [6, 5, 4, 3, 2, 1]
+        registers = [6, 5, 4, 3, 2, 1, 0]
         for register in registers:
             self.handle_POP(POP, register, None)
         ## Pop registers 6 through 0
+    def handle_CMP(self, operand_a, operand_b, operands):
+        value_1 = self.register[operand_a]
+        value_2 = self.register[operand_b]
+        if value_1 > value_2:
+            self.fl = 0b00000010
+        elif value_1 == value_2:
+           self.fl = 0b00000001
+        else:
+            self.fl = 0b00000100
 
     def run(self):
         running = True

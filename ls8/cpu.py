@@ -169,7 +169,12 @@ class CPU:
         self.pc += operands
 
     def handle_IRET(self, operand_a, operand_b, operands):
-        pass
+        for i in range(6, -1, -1):
+            self.manual_POP(i)
+        self.fl = self.ram[self.sp]
+        self.sp += 1
+        self.pc = self.ram[self.sp]
+        self.sp += 1
 
     def handle_CMP(self, operand_a, operand_b, operands):
         value_1 = self.register[operand_a]
@@ -190,6 +195,11 @@ class CPU:
     def manual_PUSH(self, value):
         self.sp -= 1
         self.ram[self.sp] = value
+
+    def manual_POP(self, operand_a):
+        value = self.ram[self.sp]
+        self.register[operand_a] = value
+        self.sp += 1
 
     def run(self):
         running = True

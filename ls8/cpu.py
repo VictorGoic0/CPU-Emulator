@@ -27,7 +27,6 @@ class CPU:
         self.register[7] = 0xF4
         self.sp = self.register[7]
         self.IS = self.register[6]
-        self.im = self.register[5]
         self.pc = 0
         self.fl = 0b00000000
         self.branchtable = {}
@@ -206,21 +205,26 @@ class CPU:
         start_time = time.time()
         while running:
             if self.IS == 0b00000001:
-                masked_interrupts = self.im & self.IS
-                for i in range(8):
-                    interrupt = ((masked_interrupts >> i) & 1) == 1
-                    if interrupt:
-                        self.IS = 0
-                        self.manual_PUSH(self.pc)
-                        self.manual_PUSH(self.fl)
-                        for i in range(7):
-                            self.manual_PUSH(self.register[i])
-                        handler_address = self.ram[0xF8]
-                        self.pc = handler_address
-                        break
-                    else:
-                        continue
-            current_time = time.time()
+                interrupt_found = False
+                IM = self.register[5]
+                masked_interrupts = IM & self.IS
+                if masked_interrupts:
+                    for i in range(8):
+                        interrupt = ((masked_interrupts >> i) & 1) == 1
+                        if interrupt:
+                            interrupt_found = True
+                            self.IS = 0
+                            self.manual_PUSH(self.pc)
+                            self.manual_PUSH(self.fl)
+                            for i in range(7):
+                                self.manual_PUSH(self.register[i])
+                            handler_address = self.ram[0xF8]
+                            self.pc = handler_address
+                            break
+                if not interrupt_found:
+                    self.IS = 0
+                    start_time = time.time()
+            current_time = time.time() - start_time
             if current_time >= 1:
                 start_time = time.time()
                 self.IS = 0b00000001

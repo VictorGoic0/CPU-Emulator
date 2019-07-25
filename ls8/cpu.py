@@ -1,6 +1,7 @@
 """CPU functionality."""
 
 import sys
+import time
 HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
@@ -15,6 +16,7 @@ JMP = 0b01010100
 PRA = 0b01001000
 IRET = 0b00010011
 CMP = 0b10100111
+# INT = 0b01010010
 
 class CPU:
     """Main CPU class."""
@@ -23,8 +25,6 @@ class CPU:
         self.ram = [0] * 256
         self.register = [0] * 8
         self.register[7] = 0xF4
-        self.register[6] = 0
-        self.register[5] = 0
         self.sp = self.register[7]
         self.IS = self.register[6]
         self.im = self.register[5]
@@ -44,6 +44,7 @@ class CPU:
         self.branchtable[PRA] = self.handle_PRA
         self.branchtable[IRET] = self.handle_IRET
         self.branchtable[CMP] = self.handle_CMP
+        # self.branchtable[INT] = self.handle_INT
 
     def ram_read(self, address):
         return self.ram[address]
@@ -168,10 +169,8 @@ class CPU:
         self.pc += operands
 
     def handle_IRET(self, operand_a, operand_b, operands):
-        registers = [6, 5, 4, 3, 2, 1, 0]
-        for register in registers:
-            self.handle_POP(POP, register, None)
-        ## Pop registers 6 through 0
+        pass
+        
     def handle_CMP(self, operand_a, operand_b, operands):
         value_1 = self.register[operand_a]
         value_2 = self.register[operand_b]
@@ -182,9 +181,37 @@ class CPU:
         else:
             self.fl = 0b00000100
 
+    # def handle_INT(self, operand_a, operand_b, operands):
+    #     interrupt_number = self.register[operand_a]
+    #     # Set nth bit in IS register to this value ??
+    #     self.IS = self.IS | interrupt_number
+    #     self.pc += operands
+
+    def manual_PUSH(self, value):
+        self.sp -= 1
+        self.ram[self.sp] = value
+
     def run(self):
         running = True
+        start_time = time.time()
         while running:
+            if self.IS == 0b00000001:
+                masked_interrupts = self.im & self.IS
+                for i in range(8):
+                    interrupt = ((masked_interrupts >> i) & 1) == 1
+                    if interrupt:
+                        self.IS = 0
+                        self.manual_PUSH(self.pc)
+                        self.manual_PUSH(self.fl)
+                        for i in range(7):
+                            self.manual_PUSH(self.register[i])
+                        break
+                    else:
+                        continue
+            current_time = time.time()
+            if current_time >= 1:
+                start_time = time.time()
+                self.IS = 0b00000001
             IR = self.ram_read(self.pc)
             operand_a = self.ram_read(self.pc+1)
             operand_b = self.ram_read(self.pc+2)

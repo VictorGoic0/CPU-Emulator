@@ -170,7 +170,7 @@ class CPU:
 
     def handle_IRET(self, operand_a, operand_b, operands):
         pass
-        
+
     def handle_CMP(self, operand_a, operand_b, operands):
         value_1 = self.register[operand_a]
         value_2 = self.register[operand_b]
@@ -205,6 +205,8 @@ class CPU:
                         self.manual_PUSH(self.fl)
                         for i in range(7):
                             self.manual_PUSH(self.register[i])
+                        handler_address = self.ram[0xF8]
+                        self.pc = handler_address
                         break
                     else:
                         continue

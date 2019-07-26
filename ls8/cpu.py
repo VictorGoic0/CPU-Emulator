@@ -188,16 +188,21 @@ class CPU:
            self.fl = 0b00000001
         else:
             self.fl = 0b00000100
+        self.pc += operands
 
     def handle_JEQ(self, operand_a, operand_b, operands):
         if self.fl == 0b00000001:
             address = self.register[operand_a]
             self.pc = address
+        else:
+            self.pc += operands
 
     def handle_JNE(self, operand_a, operand_b, operands):
         if self.fl != 0b00000001:
             address = self.register[operand_a]
             self.pc = address
+        else:
+            self.pc += operands
 
     # def handle_INT(self, operand_a, operand_b, operands):
     #     interrupt_number = self.register[operand_a]

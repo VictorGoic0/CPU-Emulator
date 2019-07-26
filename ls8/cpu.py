@@ -16,6 +16,7 @@ JMP = 0b01010100
 PRA = 0b01001000
 IRET = 0b00010011
 CMP = 0b10100111
+JEQ = 0b01010101
 # INT = 0b01010010
 
 class CPU:
@@ -43,6 +44,7 @@ class CPU:
         self.branchtable[PRA] = self.handle_PRA
         self.branchtable[IRET] = self.handle_IRET
         self.branchtable[CMP] = self.handle_CMP
+        self.branchtable[JEQ] = self.handle_JEQ
         # self.branchtable[INT] = self.handle_INT
 
     def ram_read(self, address):
@@ -184,6 +186,11 @@ class CPU:
            self.fl = 0b00000001
         else:
             self.fl = 0b00000100
+
+    def handle_JEQ(self, operand_a, operand_b, operands):
+        if self.fl == 0b00000001:
+            address = self.register[operand_a]
+            self.pc = address
 
     # def handle_INT(self, operand_a, operand_b, operands):
     #     interrupt_number = self.register[operand_a]
